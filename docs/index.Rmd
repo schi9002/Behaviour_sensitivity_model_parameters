@@ -5,7 +5,11 @@ date: "`r Sys.Date()`"
 output:
   rmdformats::robobook:
     highlight: kate
-    toc_depth: 6
+  html_document:
+    df_print: paged
+  pdf_document: default
+  editor_options:
+  chunk_output_type: inline
       
 ---
 
@@ -1177,6 +1181,8 @@ derivative_lsa_svi_int %>%
   ggtitle("SVI Scale up factor", subtitle = "per %")
 ```
 
+# SSB Tax
+
 ## PE Cordial
 ```{r PE Cordial der,echo=F, message=F, error=F, warning=F, fig.height=1*7*2, fig.width=1.5*2*2}
 derivative_lsa_ssb_int %>% 
@@ -1321,3 +1327,5 @@ derivative_lsa_ssb_int %>%
   guides(colour = guide_legend("BMI"))+
   ggtitle("SSB Tax %", subtitle = "per 0.01")
 ```
+
+### Something
