@@ -1,0 +1,63 @@
+---
+author: Simon Chiu
+date: '`r format(Sys.Date())`'
+title: How Novel is my approach
+output:
+  rmdformats::robobook:
+    highlight: kate
+    code_folding: hide
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Aims
+
+The purpose of this document is to examplify how novel it actually is to include distribution theory into obesity modeling in system dynamics modeling.
+
+The main challenge that i see in modeling obesity is the link between changes in BMI and changes in population prevelance
+
+$$ f(\Delta BMI) = T $$
+where $\Delta BMI$ is the change in body mass index as a result of some change in behaviour, either from intervention or from societal/ underlying change and $T$ is the transition estiamte between BMI groups
+
+# A very quick look at others models
+
+Looking at a few examples where the model is aimed at estimating population provenances; we would like to discuss how the model architect has dealt with converting changes in BMI into changes in Population provenances
+
+## J Homer; Obesity Population Dynamics:   Exploring Historical Growth and Plausible Futures in the U.S.  
+
+Estimating BMI categories down-flow rates was derived from self-report data using the National Health and Nutrition Examination Survey (2002) in adults and Arkansas statewide pre-K through 12th grade 
+assessment (2004-2005).
+
+It seems that the model has exogenous dynamics and relies on survey data, since these are NOT longitudinal data sources these relationships much static?
+
+Internal URL : file:///media/simon/ExtSSD/PhD/2%20Literature%20Reveiw/Archive/0%20Literature%20Review/Other%20SM%20literature%20reviews/Referenced%20Models/H_Xue/2%20SDM%20HOMER%20Obesity%20population%20dynamics%20exploring%20historical%20growth%20and%20plausible.pdf
+
+External URL : https://systemdynamics.org/wp-content/uploads/assets/cases/HOMER141.pdf
+
+## L. M. Frerich Modeling Social Transmission Dynamics of Unhealthy Behaviors for Evaluating Prevention and Treatment Interventions on Childhood Obesity 
+
+The primary aim of this model looks to be the hypothesis of a social transmission of obsesigenic behaviours between adult-to-adult and adult-to-child 
+
+The paper describes the relationships between BMI categories and 
+
++ adult-to-adult,  adult-to-child and child-to-child
++ BMI stocks them self
++ The time required to move to stocks
++ the proportion of individual engaging in weight loss.
+
+This model doesn't compare historic data
+
+In the model diagram it just looks to have a exogenous rate of change variable
+
+Internal URL : file:///media/simon/ExtSSD/PhD/2%20Literature%20Reveiw/Archive/0%20Literature%20Review/Other%20SM%20literature%20reviews/Referenced%20Models/H_Xue/4%20SDM%20FRERICH%20Modeling%20social%20transmission%20dynamics%20of%20unhealth%20behaviours%20for%20evaluating%20prevention.PDF
+
+External URL : https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0082887
+
+## S Fallah-Fini, Connecting micro dynamics and population distributions in system dynamics models
+
+This is one of the closest model in terms of method
+
+
