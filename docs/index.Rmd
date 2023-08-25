@@ -351,6 +351,18 @@ lsa.bmi.df.time.series.diff.derv.summary %>%
   rename("Label"="focus.title", "Average cumulative difference in derivatives"="mean_cum_sum_diff.der_value") %>%
   knitr::kable(.) %>% 
   kableExtra::footnote(., "Ranked variables")
+
+
+# Print out to csv
+# lsa.bmi.df.time.series.diff.derv.summary %>%
+#   group_by(focus.title) %>% 
+#   # summarise(mean_cum_sum_diff.der_value=mean(max_cum_sum_diff.der_value)) %>%
+#   summarise(mean_cum_sum_diff.der_value=mean(mean_cum_sum_diff.der_value)) %>%
+#   arrange(-mean_cum_sum_diff.der_value) %>% 
+#   select(focus.title, mean_cum_sum_diff.der_value) %>% 
+#   filter(row_number()<=10) %>% 
+#   rename("Label"="focus.title", "Average cumulative difference in derivatives"="mean_cum_sum_diff.der_value") %>% 
+#   write.csv()
   
 ```
 
@@ -3385,7 +3397,7 @@ lsa.bmi.df.time.series.diff.derv.summary %>%
 ```
 
 **Sugar-sweetened beverages**
-```{r Prop of nutrients within food group Sugar_Sweetened_beverage, echo=F, message=F, error=F, warning=F, fig.width=1*2*3.2,fig.height=1*5*3.2}
+```{r Prop of nutrients within food group Sugar_Sweetened_beverage, echo=F, message=F, error=F, warning=F, fig.width=1*2*3.2,fig.height=1*2*3.2}
 # lsa.bmi.df.time.series.diff.derv.summary %>%
 #   rename("Gender outcome"="gender.output",
 #          "BMI input"="bmi.input",
@@ -3877,3 +3889,206 @@ plot_layout(nrow = 1, ncol=2, guides = "collect") +
   theme(plot.title = element_text(hjust = 0.5), legend.position = "bottom")
 ```
 
+
+# Plots for the chapter
+```{r, echo=F, message=F, warning=F, error=F, fig.width=1*6*2.5, fig.height=1*3*2.5}
+lsa.bmi.df.time.series.diff.derv %>% 
+  filter(focus.title=="SUGAR Kj per gram" ) %>%
+  filter(gender.output=='Male') %>%
+  filter(bmi.output=="With obesity") %>%
+  filter(as.numeric(age.groups.output)<=6) %>% 
+  ungroup() %>% 
+  filter(input.value==max(input.value) | input.value==min(input.value)) %>%
+  select(year, run, age.groups.output,value, value.base.model) %>% 
+  gather(., run.class, value, value:value.base.model) %>% 
+  group_by(run, run.class) %>% 
+  mutate(id.group= cur_group_id()) %>% 
+  filter(id.group!=4) %>% 
+  mutate(run.class=factor(id.group, levels=c(1,2,3), labels=c("Lower extreme", "Initial assumption", "Upper extreme"))) %>% 
+  mutate(class=1) %>% 
+  ungroup() %>% 
+  rename("Age output"="age.groups.output") %>%
+  mutate(class=factor(class, levels=c(1,2,3), labels=c("Outcome","Derivative","Cumulative absolute \n difference"))) %>% 
+  ggplot()+
+  geom_line(aes(x=year, y=value, color=run.class, linetype=run.class))+
+  facet_grid(rows = vars(class),cols=vars(`Age output`), scales = "free")+
+  scale_color_manual(values=c( "blue","black", "red"))+
+  scale_linetype_manual(values=c(1,2,1))+
+  scale_x_continuous(breaks = c(seq(2010, 2050, 20))) +
+  scale_y_continuous(labels = scales::percent)+
+  guides(colour = guide_legend("SUGAR Kj per gram"),
+         linetype = guide_legend("SUGAR Kj per gram"))+
+  theme_bw()+xlab("Year")+
+  theme(legend.position = "bottom",
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank())+
+  ggtitle("Model behaviour", subtitle = "% Males with obesity, for extreme values of energy density of sugar (kJ/g)")+
+
+
+  lsa.bmi.df.time.series.diff.derv %>% 
+             filter(focus.title=="SUGAR Kj per gram" ) %>%
+             filter(gender.output=='Male') %>%
+             filter(bmi.output=="With obesity") %>%
+             filter(as.numeric(age.groups.output)<=6) %>% 
+             ungroup() %>% 
+             filter(input.value==max(input.value) | input.value==min(input.value)) %>%
+             select(year, run, age.groups.output,value.der, value.der.base.model) %>% 
+             gather(., run.class, value, value.der:value.der.base.model) %>% 
+             group_by(run, run.class) %>% 
+             mutate(id.group= cur_group_id()) %>% 
+             filter(id.group!=4) %>% 
+             mutate(run.class=factor(id.group, levels=c(1,2,3), labels=c("Lower extreme", "Initial assumption", "Upper extreme"))) %>% 
+             mutate(class=2) %>% 
+             ungroup() %>% 
+    rename("Age output"="age.groups.output") %>%
+  mutate(class=factor(class, levels=c(1,2,3), labels=c("Outcome","Derivative","Cumulative absolute \n difference"))) %>% 
+  ggplot()+
+  geom_line(aes(x=year, y=value, color=run.class, linetype=run.class))+
+  facet_grid(rows = vars(class),cols=vars(`Age output`), scales = "free")+
+  scale_color_manual(values=c( "blue","black", "red"))+
+  scale_linetype_manual(values=c(1,2,1))+
+  scale_x_continuous(breaks = c(seq(2010, 2050, 20))) +
+  guides(colour = guide_legend("SUGAR Kj per gram"),
+         linetype = guide_legend("SUGAR Kj per gram"))+
+  theme_bw()+xlab("Year")+
+  theme(legend.position = "bottom",
+        axis.title.y = element_blank())+
+  # ggtitle("Model behaviour: changes in SUGAR Kj per gram", subtitle = "Males with obesity") + 
+  
+  
+  # lsa.bmi.df.time.series.diff.derv %>% 
+  #              filter(focus.title=="SUGAR Kj per gram" ) %>%
+  #              filter(gender.output=='Male') %>%
+  #              filter(bmi.output=="With obesity") %>%
+  #              filter(as.numeric(age.groups.output)<=6) %>% 
+  #              ungroup() %>% 
+  #              filter(input.value==max(input.value) | input.value==min(input.value)) %>%
+  #              mutate(cum_sum_diff.der_value.base.model=NA) %>% 
+  #              select(year, run, age.groups.output,cum_sum_diff.der_value, cum_sum_diff.der_value.base.model) %>% 
+  #              gather(., run.class, value, cum_sum_diff.der_value:cum_sum_diff.der_value.base.model) %>% 
+  #              group_by(run, run.class) %>% 
+  #              mutate(id.group= cur_group_id()) %>% 
+  #              filter(id.group!=4) %>% 
+  #              mutate(run.class=factor(id.group, levels=c(1,2,3), labels=c("Lower extreme", "Initial assumption", "Upper extreme"))) %>% 
+  #              mutate(class=3) %>% 
+  #              ungroup() %>% 
+  # rename("Age output"="age.groups.output") %>%
+  # mutate(class=factor(class, levels=c(1,2,3), labels=c("Outcome","Derivative","Cumulative absolute \n difference"))) %>% 
+  # ggplot()+
+  # geom_line(aes(x=year, y=value, color=run.class, linetype=run.class))+
+  # facet_grid(rows = vars(class),cols=vars(`Age output`), scales = "free")+
+  # scale_color_manual(values=c( "blue","black", "red"))+
+  # scale_linetype_manual(values=c(1,2,1))+
+  # scale_x_continuous(breaks = c(seq(2010, 2050, 20))) +
+  # guides(colour = guide_legend("SUGAR Kj per gram"),
+  #        linetype = guide_legend("SUGAR Kj per gram"))+
+  # theme_bw()+xlab("Year")+
+  # theme(legend.position = "bottom",
+  #       axis.title.y = element_blank())+
+  # ggtitle("Model behaviour: changes in SUGAR Kj per gram", subtitle = "Males with obesity")+
+  
+  plot_layout(ncol=1, nrow = 3, guides = "collect")&theme(legend.position = "bottom")
+
+```
+
+
+```{r, echo=F, message=F, warning=F, error=F, fig.width=1*6*2.5, fig.height=1*3*2.5}
+lsa.bmi.df.time.series.diff.derv %>% 
+  filter(focus.title=="VIGOROUS PA METs" ) %>%
+  filter(gender.output=='Male') %>%
+  filter(bmi.output=="With obesity") %>%
+  filter(as.numeric(age.groups.output)<=6) %>% 
+  ungroup() %>% 
+  filter(input.value==max(input.value) | input.value==min(input.value)) %>%
+  select(year, run, age.groups.output,value, value.base.model) %>% 
+  gather(., run.class, value, value:value.base.model) %>% 
+  group_by(run, run.class) %>% 
+  mutate(id.group= cur_group_id()) %>% 
+  filter(id.group!=4) %>% 
+  mutate(run.class=factor(id.group, levels=c(1,2,3), labels=c("Lower extreme", "Initial assumption", "Upper extreme"))) %>% 
+  mutate(class=1) %>% 
+  ungroup() %>% 
+  rename("Age output"="age.groups.output") %>%
+  mutate(class=factor(class, levels=c(1,2,3), labels=c("Outcome","Derivative","Cumulative absolute \n difference"))) %>% 
+  ggplot()+
+  geom_line(aes(x=year, y=value, color=run.class, linetype=run.class))+
+  facet_grid(rows = vars(class),cols=vars(`Age output`), scales = "free")+
+  scale_color_manual(values=c( "blue","black", "red"))+
+  scale_linetype_manual(values=c(1,2,1))+
+  scale_x_continuous(breaks = c(seq(2010, 2050, 20))) +
+  scale_y_continuous(labels = scales::percent)+
+  guides(colour = guide_legend("VIGOROUS PA METs"),
+         linetype = guide_legend("VIGOROUS PA METs"))+
+  theme_bw()+xlab("Year")+
+  theme(legend.position = "bottom",
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank())+
+  ggtitle("Model behaviour: changes in VIGOROUS PA METs", subtitle = "Males with obesity")+
+
+
+  lsa.bmi.df.time.series.diff.derv %>% 
+             filter(focus.title=="VIGOROUS PA METs" ) %>%
+             filter(gender.output=='Male') %>%
+             filter(bmi.output=="With obesity") %>%
+             filter(as.numeric(age.groups.output)<=6) %>% 
+             ungroup() %>% 
+             filter(input.value==max(input.value) | input.value==min(input.value)) %>%
+             select(year, run, age.groups.output,value.der, value.der.base.model) %>% 
+             gather(., run.class, value, value.der:value.der.base.model) %>% 
+             group_by(run, run.class) %>% 
+             mutate(id.group= cur_group_id()) %>% 
+             filter(id.group!=4) %>% 
+             mutate(run.class=factor(id.group, levels=c(1,2,3), labels=c("Lower extreme", "Initial assumption", "Upper extreme"))) %>% 
+             mutate(class=2) %>% 
+             ungroup() %>% 
+    rename("Age output"="age.groups.output") %>%
+  mutate(class=factor(class, levels=c(1,2,3), labels=c("Outcome","Derivative","Cumulative absolute \n difference"))) %>% 
+  ggplot()+
+  geom_line(aes(x=year, y=value, color=run.class, linetype=run.class))+
+  facet_grid(rows = vars(class),cols=vars(`Age output`), scales = "free")+
+  scale_color_manual(values=c( "blue","black", "red"))+
+  scale_linetype_manual(values=c(1,2,1))+
+  scale_x_continuous(breaks = c(seq(2010, 2050, 20))) +
+  guides(colour = guide_legend("VIGOROUS PA METs"),
+         linetype = guide_legend("VIGOROUS PA METs"))+
+  theme_bw()+xlab("Year")+
+  theme(legend.position = "bottom",
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank())+
+  # ggtitle("Model behaviour: changes in SUGAR Kj per gram", subtitle = "Males with obesity") + 
+  
+  
+  lsa.bmi.df.time.series.diff.derv %>% 
+               filter(focus.title=="VIGOROUS PA METs" ) %>%
+               filter(gender.output=='Male') %>%
+               filter(bmi.output=="With obesity") %>%
+               filter(as.numeric(age.groups.output)<=6) %>% 
+               ungroup() %>% 
+               filter(input.value==max(input.value) | input.value==min(input.value)) %>%
+               mutate(cum_sum_diff.der_value.base.model=NA) %>% 
+               select(year, run, age.groups.output,cum_sum_diff.der_value, cum_sum_diff.der_value.base.model) %>% 
+               gather(., run.class, value, cum_sum_diff.der_value:cum_sum_diff.der_value.base.model) %>% 
+               group_by(run, run.class) %>% 
+               mutate(id.group= cur_group_id()) %>% 
+               filter(id.group!=4) %>% 
+               mutate(run.class=factor(id.group, levels=c(1,2,3), labels=c("Lower extreme", "Initial assumption", "Upper extreme"))) %>% 
+               mutate(class=3) %>% 
+               ungroup() %>% 
+  rename("Age output"="age.groups.output") %>%
+  mutate(class=factor(class, levels=c(1,2,3), labels=c("Outcome","Derivative","Cumulative absolute \n difference"))) %>% 
+  ggplot()+
+  geom_line(aes(x=year, y=value, color=run.class, linetype=run.class))+
+  facet_grid(rows = vars(class),cols=vars(`Age output`), scales = "free")+
+  scale_color_manual(values=c( "blue","black", "red"))+
+  scale_linetype_manual(values=c(1,2,1))+
+  scale_x_continuous(breaks = c(seq(2010, 2050, 20))) +
+  guides(colour = guide_legend("VIGOROUS PA METs"),
+         linetype = guide_legend("VIGOROUS PA METs"))+
+  theme_bw()+xlab("Year")+
+  theme(legend.position = "bottom",
+        axis.title.y = element_blank())+
+  # ggtitle("Model behaviour: changes in SUGAR Kj per gram", subtitle = "Males with obesity")+
+  
+  plot_layout(ncol=1, nrow = 3, guides = "collect")&theme(legend.position = "bottom")
+
+```
